@@ -1,0 +1,47 @@
+{% extends 'firstapp/layout.html' %}
+
+{% block content %}
+<header class="ui container">
+    <div class="ui centered grid">
+        <div class="eight wide column">
+        </div>
+        <div class="eight wide column">
+          <div class="ui buttons">
+            {% if request.user.is_authenticated %}
+            <button class="ui button"><a href="{% url 'logout' %}?next=/home/" > Выйти</a></button>
+            {% else %}
+            <button class="ui button"><a href="{% url 'login' %}" > Войти</a></button>
+            <button class="ui button"> <a href="{% url 'register' %}" > Зарегистрироваться</a></button>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+<div style="margin-top: 50px;" class="ui container">
+    <h1 class="ui center aligned header">Мой менеджер задач</h1>
+    <h3 class="test_style">Управляй своим временем!</h3>
+    <form class="ui form" action="{% url 'add' %}" method="post">
+        {% csrf_token %}
+        <div class="field">
+            <label>Новая задача</label>
+            <input type="text" name="title" placeholder="Введите название задачи"><br>
+        </div>
+        <button class="ui teal basic button" type="submit">Добавить</button>
+    </form>
+
+{% for todo in todo_list %}
+<div class="ui segment" >
+    <p class="ui big header"> N{{todo.id}} {{todo.title}}</p>
+
+    {%if todo.is_complete == False %}
+    <span class="ui gray label"> Не завершено</span>
+    <a class="ui primary basic button" href="{% url 'update' todo_id=todo.id %}">Закрыть</a>
+    {% else %}
+    <span class="ui green label">завершено</span>
+    <a class="ui blue button" href="{% url 'update' todo_id=todo.id %}">Открыть</a>
+    {% endif %}
+    <a class="ui negative basic button" href = "{% url 'delete' todo_id=todo.id %}">Удалить</a>
+</div>
+{% endfor %}
+</div>
+
+{% endblock %}
