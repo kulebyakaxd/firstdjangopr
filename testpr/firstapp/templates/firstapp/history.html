@@ -1,13 +1,12 @@
 {% extends 'firstapp/layout.html' %}
 
 {% block content %}
-
-  <div style="display: flex;
+<div style="display: flex;
   justify-content: center;
   padding: 1em;
   background-color: #aeaeae;">
 
-<div class="ui button" style=" margin-right: auto;"><a href="{% url 'history' %}" > История задач</a></div>
+<div class="ui button" style=" margin-right: auto;"><a href="{% url 'index' %}" > Главная </a></div>
 
   <div class="ui buttons" >
     {% if request.user.is_authenticated %}

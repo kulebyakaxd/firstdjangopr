@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm  
 
 
-from .models import ToDo
+from .models import ToDo,ToDoHistory
 
 # Create your views here.
 
@@ -20,6 +20,10 @@ def index(request):
     todos = ToDo.objects.all()
     return render(request, 'firstapp/index.html', {'todo_list': todos,'title':'Главная страница'})
 
+def history(request):
+    todoshist = ToDoHistory.objects.all()
+    return render(request, 'firstapp/history.html', {'todo_list': todoshist,'title':'Главная страница'})
+
 @require_http_methods(['POST'])
 def add(request):
     title = request.POST['title']
@@ -27,15 +31,30 @@ def add(request):
     todo.save()
     return redirect('index')
 
+
+
 def update(request,todo_id):
     todo = ToDo.objects.get(id=todo_id)
-    todo.is_complete = not todo.is_complete
+    # todo.is_complete = not todo.is_complete
+    if todo.status == "не начато":
+        todo.status = "в процессе"
+    elif todo.status == "в процессе":
+        todo.status = "завершено"
+    else:
+        todo.status = "не начато"
     todo.save()
     return redirect('index')
 
 def delete(request,todo_id):
     todo = ToDo.objects.get(id=todo_id)
+    addhistory(request,todo_id)
     todo.delete()
+    return redirect('index')
+
+def addhistory(request,objid):
+    todo = ToDo.objects.get(id=objid)
+    todhist = ToDoHistory(title = todo.title, status = todo.status)
+    todhist.save()
     return redirect('index')
 
 def register(request):
